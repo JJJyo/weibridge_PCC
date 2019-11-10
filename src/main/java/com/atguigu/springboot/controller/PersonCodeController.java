@@ -1,7 +1,9 @@
 package com.atguigu.springboot.controller;
 
 import com.atguigu.springboot.bean.PInfo;
+import com.atguigu.springboot.bean.TUeInfo;
 import com.atguigu.springboot.service.PInfoService;
+import com.atguigu.springboot.service.TUeInfoService;
 import com.atguigu.springboot.utils.TestInteface;
 import com.sun.corba.se.pept.transport.ListenerThread;
 import com.sun.deploy.pings.Pings;
@@ -18,14 +20,20 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
-import java.util.Arrays;
-import java.util.List;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Controller
 public class PersonCodeController {
 
+
+    int fazhi = 5;
     @Autowired
     PInfoService pInfoService;
+
+    @Autowired
+    TUeInfoService tUeInfoService;
 
 
     @GetMapping("/people")
@@ -59,50 +67,75 @@ public class PersonCodeController {
             in.read(image, 0, image.length);
             in.close();
             //in是上传的照片现在把in2改成从数据库中读出的照片。
+            List<TUeInfo> tUeInfos = tUeInfoService.getAll();
             List<PInfo> pInfos = pInfoService.getAll();
             System.out.println("Init:"+
                     INSTANCE.Init()
             );
+            ArrayList successList = new ArrayList();
+
+
+            //循环对比
             for (PInfo p : pInfos){
 
                 System.out.println(p.getpTime());
 //                System.out.println(Arrays.toString(p.getpPicture()));
                 FileInputStream in2 = new FileInputStream(
                     new  File(p.getpPicturelocal()));
-
                 byte[] image2 = new byte[in2.available()];
-
                 in2.read(image2, 0,image2.length);
                 in2.close();
 
                 double consequence = INSTANCE.YK_Compare_JAVA(
                         image, image.length,
                         image2, image2.length);
-                System.out.println("----"+consequence);
+                //将对比成功的plocal和ptime放到successlist里
+
+
+
+                if (consequence >= 0.5 ){
+
+                    System.out.println("对比成功");
+                    for (TUeInfo tu : tUeInfos){
+
+
+                        Calendar c1 = Calendar.getInstance();
+                        Calendar c2 = Calendar.getInstance();
+                        Calendar c3 = Calendar.getInstance();
+
+                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        ParsePosition pos = new ParsePosition(0);
+                        SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        ParsePosition pos2 = new ParsePosition(0);
+                        String strDate = p.getpTime();
+                        String tuTime = tu.getCaptureTime();
+                        Date strtodate = formatter.parse(strDate, pos);
+                        Date strtodate2 = formatter2.parse(tuTime, pos2);
+                        c1.setTime(strtodate);//要判断的日期
+                        c2.setTime(strtodate2);//初始日期
+                        c3.setTime(strtodate2);//也给初始日期 把分钟加五
+                        c3.add(Calendar.MINUTE, 5);
+                        c2.add(Calendar.MINUTE, -5);//减去五分钟
+
+                        if (c1.after(c2) && c1.before(c3)) {
+                            if ( Integer.valueOf(tu.getLatype())==p.getpLocal() ){
+
+                                successList.add("成功了"+tu.getId());
+                            }
+                        } else {
+
+                        }
+
+                    }
+                }
+
              }
-            System.out.println("333333");
 
+            for(int j=0;j<successList.size();j++){
+                System.out.println("匹配成功的id为"+successList.get(j));
 
-//            FileInputStream in2 = new FileInputStream(
-//                    new  File("F:\\02、尚硅谷SpringBoot视频\\" +
-//                            "源码、资料、课件\\代码\\weibridge_PCC\\src\\main\\resources\\templates\\img\\4.JPG"));
-//            byte[] image = new byte[in.available()];
-//            byte[] image2 = new byte[in2.available()];
-//            in.read(image, 0, image.length);
-//            in.close();
-//            in2.read(image2, 0,image2.length);
-//            in2.close();
+            }
 
-            //YKCompare方法测试
-//            System.out.println("Init:"+
-//                    INSTANCE.Init()
-//            );
-//            double consequence = INSTANCE.YK_Compare_JAVA(
-//                    image, image.length,
-//                    image2, image2.length);
-//            System.out.println("----"+consequence);
-//            //6.把文件名放在model里，以便后续显示用
-//            m.addAttribute("fileName", fileName);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return "上传失败," + e.getMessage();
@@ -111,8 +144,7 @@ public class PersonCodeController {
             return "上传失败," + e.getMessage();
         }
 
-
-        return "redirect:person_code/list";
+        return null;
     }
 
     @GetMapping("/testpeople")
