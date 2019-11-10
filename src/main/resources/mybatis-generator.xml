@@ -13,10 +13,13 @@
                         connectionURL="jdbc:mysql://127.0.0.1:3306/mb_pccompare?serverTimezone=UTC"
                         userId="root"
                         password="960711" >
+            <property name="useInformationSchema" value="true"></property>
+            <property name="remarks" value="true"></property>
         </jdbcConnection>
         <javaTypeResolver>
             <property name="forceBigDecimals" value="false"/>
         </javaTypeResolver>
+
         <!--生成Model类存放位置JAVABEAN-->
         <javaModelGenerator targetPackage="com.atguigu.springboot.bean" targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
@@ -45,8 +48,6 @@
                 <!--selectByExampleQueryId="false"&ndash;&gt;-->
             <!--<generatedKey column="id" sqlStatement="JDBC" identity="true"/>-->
         <!--</table>-->
-        <table tableName="department" ></table>
-        <table tableName="employee" ></table>
         <table tableName="location" ></table>
         <table tableName="p_info" ></table>
         <table tableName="records" ></table>
