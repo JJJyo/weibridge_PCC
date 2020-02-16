@@ -28,4 +28,8 @@ public class PInfoService {
         return pInfoMapper.selectByPrimaryKey(id);
     }
 
+    public byte[] getPicture(Integer id){
+        return pInfoMapper.findPicture(id);
+    }
+
 }

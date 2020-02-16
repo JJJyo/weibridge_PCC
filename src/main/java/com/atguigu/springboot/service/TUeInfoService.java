@@ -19,4 +19,13 @@ public class TUeInfoService {
         return tUeInfoMapper.selectByExample(null);
     }
 
+    public TUeInfo getById(Long id){
+
+        return tUeInfoMapper.selectByPrimaryKey(id);
+    }
+
+    public List<TUeInfo> getByNumber(String number) {
+
+        return tUeInfoMapper.selectByNumber(number);
+    }
 }

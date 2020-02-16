@@ -48,9 +48,13 @@
                 <!--selectByExampleQueryId="false"&ndash;&gt;-->
             <!--<generatedKey column="id" sqlStatement="JDBC" identity="true"/>-->
         <!--</table>-->
-        <table tableName="location" ></table>
-        <table tableName="p_info" ></table>
-        <table tableName="records" ></table>
-        <table tableName="t_ue_info" ></table>
+
+        <!--<table tableName="location" ></table>-->
+        <!--<table tableName="p_info" ></table>-->
+        <table tableName="facedata" ></table>
+
+        <!--<table tableName="records" ></table>-->
+        <!--<table tableName="t_ue_info" ></table>-->
+        <!--<table tableName="carNumber"></table>-->
     </context>
 </generatorConfiguration>

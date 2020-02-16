@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 	<head>
@@ -24,45 +23,48 @@
 		<div class="container-fluid">
 			<div class="row">
 				<!--引入侧边栏-->
-				<div th:replace="commons/bar::#sidebar(activeUri='cars')"></div>
+				<div th:replace="commons/bar::#sidebar(activeUri='number')"></div>
 
 				<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
 
-					<div class="div-a">
-						<form action="carNumber" method="post" enctype="multipart/form-data">
+					<div class="div-a col-lg-6">
+						<form action="pNumber" method="post" enctype="multipart/form-data">
 							<p><input class="file" type="text" name="file" /></p>
 							<p><input class="btn btn-sm btn-success" type="submit" value="提交"/></p>
 						</form>
 					</div>
 
-
-					<div class="table-responsive">
+					<div class="div-a col-lg-6">
 						<table class="table table-striped table-sm">
-							<thead>
 							<tr>
-								<th>车牌号</th>
-								<th>地点</th>
-								<th>时间</th>
-								<th>人脸详情</th>
+								<td>该imsi号的纪录次数：</td>
+								<td th:text="${count}"></td>
 							</tr>
-							</thead>
-							<tbody>
-							<tr th:each="car:${cars}">
-								<td th:text="${car.getCarnumber()}"></td>
-								<td th:text="${car.getLocation()}==1?'大连路':'其他'"></td>
-								<td th:text="${car.getTime()}"></td>
-								<td>
-									<img th:src="${success[carStat.index]}" width="200px" height="200px">
-								</td>
-							</tr>
-							</tbody>
 						</table>
 					</div>
 
-					<!--<div class="picture" th:each="lista:${success}">-->
-							<!--<img th:src="${lista}" onerror="/asserts/img/timg.jpg"/>-->
-						<!--</div>-->
-					<!--</div>-->
+
+					<div class="table-responsive">
+						<table class="table table-striped table-sm">
+
+							<tr>
+								<td width="140" height="58">人脸详情</td>
+								<td>有效次数（去除正负5分钟）</td>
+								<!--<td>地点</td>-->
+								<!--<td>时间</td>-->
+							</tr>
+							<tr th:each="t:${success}">
+								<td>
+									<img th:src="${t}" width="200px" height="200px">
+								</td>
+								<td th:text="${counts[tStat.index]}"></td>
+
+							</tr>
+
+						</table>
+					</div>
+
+
 
 				</main>
 		</div>
@@ -72,6 +74,7 @@
 		<script type="text/javascript" src="asserts/js/jquery-3.2.1.slim.min.js" th:src="@{/webjars/jquery/3.3.1/jquery.js}"></script>
 		<script type="text/javascript" src="asserts/js/popper.min.js" th:src="@{/webjars/popper.js/1.11.1/dist/popper.js}"></script>
 		<script type="text/javascript" src="asserts/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/4.0.0/js/bootstrap.js}"></script>
+
 
 	</body>
 </html>
