@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.springboot.dao.FacedataMapper">
+  <resultMap id="BaseResultMap" type="com.atguigu.springboot.bean.Facedata">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="idNumber" jdbcType="VARCHAR" property="idnumber" />
+    <result column="dataSize" jdbcType="INTEGER" property="datasize" />
+    <result column="startTime" jdbcType="VARCHAR" property="starttime" />
+    <result column="terminalTime" jdbcType="VARCHAR" property="terminaltime" />
+    <result column="cameraIP" jdbcType="VARCHAR" property="cameraip" />
+    <result column="macIP" jdbcType="VARCHAR" property="macip" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.atguigu.springboot.bean.Facedata">
+    <result column="image" jdbcType="BLOB" property="image" />
+    <result column="data" jdbcType="BLOB" property="data" />
+    <result column="fullImage" jdbcType="BLOB" property="fullimage" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, name, idNumber, dataSize, startTime, terminalTime, cameraIP, macIP
+  </sql>
+  <sql id="Blob_Column_List">
+    image, data, fullImage
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.atguigu.springboot.bean.FacedataExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from facedata
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.atguigu.springboot.bean.FacedataExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from facedata
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+
+    from facedata
+    where id = #{id,jdbcType=INTEGER}
+
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from facedata
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.atguigu.springboot.bean.FacedataExample">
+    delete from facedata
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.atguigu.springboot.bean.FacedataWithBLOBs">
+    insert into facedata (id, name, idNumber, 
+      dataSize, startTime, terminalTime, 
+      cameraIP, macIP, image, 
+      data, fullImage)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{idnumber,jdbcType=VARCHAR}, 
+      #{datasize,jdbcType=INTEGER}, #{starttime,jdbcType=VARCHAR}, #{terminaltime,jdbcType=VARCHAR}, 
+      #{cameraip,jdbcType=VARCHAR}, #{macip,jdbcType=VARCHAR}, #{image,jdbcType=LONGVARBINARY}, 
+      #{data,jdbcType=LONGVARBINARY}, #{fullimage,jdbcType=LONGVARBINARY})
+  </insert>
+  <insert id="insertSelective" parameterType="com.atguigu.springboot.bean.FacedataWithBLOBs">
+    insert into facedata
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="idnumber != null">
+        idNumber,
+      </if>
+      <if test="datasize != null">
+        dataSize,
+      </if>
+      <if test="starttime != null">
+        startTime,
+      </if>
+      <if test="terminaltime != null">
+        terminalTime,
+      </if>
+      <if test="cameraip != null">
+        cameraIP,
+      </if>
+      <if test="macip != null">
+        macIP,
+      </if>
+      <if test="image != null">
+        image,
+      </if>
+      <if test="data != null">
+        data,
+      </if>
+      <if test="fullimage != null">
+        fullImage,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="idnumber != null">
+        #{idnumber,jdbcType=VARCHAR},
+      </if>
+      <if test="datasize != null">
+        #{datasize,jdbcType=INTEGER},
+      </if>
+      <if test="starttime != null">
+        #{starttime,jdbcType=VARCHAR},
+      </if>
+      <if test="terminaltime != null">
+        #{terminaltime,jdbcType=VARCHAR},
+      </if>
+      <if test="cameraip != null">
+        #{cameraip,jdbcType=VARCHAR},
+      </if>
+      <if test="macip != null">
+        #{macip,jdbcType=VARCHAR},
+      </if>
+      <if test="image != null">
+        #{image,jdbcType=LONGVARBINARY},
+      </if>
+      <if test="data != null">
+        #{data,jdbcType=LONGVARBINARY},
+      </if>
+      <if test="fullimage != null">
+        #{fullimage,jdbcType=LONGVARBINARY},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.atguigu.springboot.bean.FacedataExample" resultType="java.lang.Long">
+    select count(*) from facedata
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update facedata
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.name != null">
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.idnumber != null">
+        idNumber = #{record.idnumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.datasize != null">
+        dataSize = #{record.datasize,jdbcType=INTEGER},
+      </if>
+      <if test="record.starttime != null">
+        startTime = #{record.starttime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.terminaltime != null">
+        terminalTime = #{record.terminaltime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cameraip != null">
+        cameraIP = #{record.cameraip,jdbcType=VARCHAR},
+      </if>
+      <if test="record.macip != null">
+        macIP = #{record.macip,jdbcType=VARCHAR},
+      </if>
+      <if test="record.image != null">
+        image = #{record.image,jdbcType=LONGVARBINARY},
+      </if>
+      <if test="record.data != null">
+        data = #{record.data,jdbcType=LONGVARBINARY},
+      </if>
+      <if test="record.fullimage != null">
+        fullImage = #{record.fullimage,jdbcType=LONGVARBINARY},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update facedata
+    set id = #{record.id,jdbcType=INTEGER},
+      name = #{record.name,jdbcType=VARCHAR},
+      idNumber = #{record.idnumber,jdbcType=VARCHAR},
+      dataSize = #{record.datasize,jdbcType=INTEGER},
+      startTime = #{record.starttime,jdbcType=VARCHAR},
+      terminalTime = #{record.terminaltime,jdbcType=VARCHAR},
+      cameraIP = #{record.cameraip,jdbcType=VARCHAR},
+      macIP = #{record.macip,jdbcType=VARCHAR},
+      image = #{record.image,jdbcType=LONGVARBINARY},
+      data = #{record.data,jdbcType=LONGVARBINARY},
+      fullImage = #{record.fullimage,jdbcType=LONGVARBINARY}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update facedata
+    set id = #{record.id,jdbcType=INTEGER},
+      name = #{record.name,jdbcType=VARCHAR},
+      idNumber = #{record.idnumber,jdbcType=VARCHAR},
+      dataSize = #{record.datasize,jdbcType=INTEGER},
+      startTime = #{record.starttime,jdbcType=VARCHAR},
+      terminalTime = #{record.terminaltime,jdbcType=VARCHAR},
+      cameraIP = #{record.cameraip,jdbcType=VARCHAR},
+      macIP = #{record.macip,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.atguigu.springboot.bean.FacedataWithBLOBs">
+    update facedata
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="idnumber != null">
+        idNumber = #{idnumber,jdbcType=VARCHAR},
+      </if>
+      <if test="datasize != null">
+        dataSize = #{datasize,jdbcType=INTEGER},
+      </if>
+      <if test="starttime != null">
+        startTime = #{starttime,jdbcType=VARCHAR},
+      </if>
+      <if test="terminaltime != null">
+        terminalTime = #{terminaltime,jdbcType=VARCHAR},
+      </if>
+      <if test="cameraip != null">
+        cameraIP = #{cameraip,jdbcType=VARCHAR},
+      </if>
+      <if test="macip != null">
+        macIP = #{macip,jdbcType=VARCHAR},
+      </if>
+      <if test="image != null">
+        image = #{image,jdbcType=LONGVARBINARY},
+      </if>
+      <if test="data != null">
+        data = #{data,jdbcType=LONGVARBINARY},
+      </if>
+      <if test="fullimage != null">
+        fullImage = #{fullimage,jdbcType=LONGVARBINARY},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.atguigu.springboot.bean.FacedataWithBLOBs">
+    update facedata
+    set name = #{name,jdbcType=VARCHAR},
+      idNumber = #{idnumber,jdbcType=VARCHAR},
+      dataSize = #{datasize,jdbcType=INTEGER},
+      startTime = #{starttime,jdbcType=VARCHAR},
+      terminalTime = #{terminaltime,jdbcType=VARCHAR},
+      cameraIP = #{cameraip,jdbcType=VARCHAR},
+      macIP = #{macip,jdbcType=VARCHAR},
+      image = #{image,jdbcType=LONGVARBINARY},
+      data = #{data,jdbcType=LONGVARBINARY},
+      fullImage = #{fullimage,jdbcType=LONGVARBINARY}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.atguigu.springboot.bean.Facedata">
+    update facedata
+    set name = #{name,jdbcType=VARCHAR},
+      idNumber = #{idnumber,jdbcType=VARCHAR},
+      dataSize = #{datasize,jdbcType=INTEGER},
+      startTime = #{starttime,jdbcType=VARCHAR},
+      terminalTime = #{terminaltime,jdbcType=VARCHAR},
+      cameraIP = #{cameraip,jdbcType=VARCHAR},
+      macIP = #{macip,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

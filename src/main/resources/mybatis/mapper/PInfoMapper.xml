@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.springboot.dao.PInfoMapper">
+  <resultMap id="BaseResultMap" type="com.atguigu.springboot.bean.PInfo">
+    <id column="p_id" jdbcType="INTEGER" property="pId" />
+    <result column="p_picturelocal" jdbcType="VARCHAR" property="pPicturelocal" />
+    <result column="p_time" jdbcType="VARCHAR" property="pTime" />
+    <result column="p_local" jdbcType="INTEGER" property="pLocal" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.atguigu.springboot.bean.PInfo">
+    <result column="p_picture" jdbcType="BLOB" property="pPicture" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    p_id, p_picturelocal, p_time, p_local
+  </sql>
+  <sql id="Blob_Column_List">
+    p_picture
+  </sql>
+  <select id="findPicture" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    		SELECT
+    		<include refid="Blob_Column_List" />
+    		FROM p_info
+    		WHERE p_id = #{pId}
+  </select>
+  <select id="selectByExampleWithBLOBs" parameterType="com.atguigu.springboot.bean.PInfoExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from p_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.atguigu.springboot.bean.PInfoExample" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from p_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from p_info
+    where p_id = #{pId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from p_info
+    where p_id = #{pId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.atguigu.springboot.bean.PInfoExample">
+    delete from p_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.atguigu.springboot.bean.PInfo">
+    insert into p_info (p_id, p_picturelocal, p_time, 
+      p_local, p_picture)
+    values (#{pId,jdbcType=INTEGER}, #{pPicturelocal,jdbcType=VARCHAR}, #{pTime,jdbcType=VARCHAR}, 
+      #{pLocal,jdbcType=INTEGER}, #{pPicture,jdbcType=LONGVARBINARY})
+  </insert>
+  <insert id="insertSelective" parameterType="com.atguigu.springboot.bean.PInfo">
+    insert into p_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pId != null">
+        p_id,
+      </if>
+      <if test="pPicturelocal != null">
+        p_picturelocal,
+      </if>
+      <if test="pTime != null">
+        p_time,
+      </if>
+      <if test="pLocal != null">
+        p_local,
+      </if>
+      <if test="pPicture != null">
+        p_picture,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pId != null">
+        #{pId,jdbcType=INTEGER},
+      </if>
+      <if test="pPicturelocal != null">
+        #{pPicturelocal,jdbcType=VARCHAR},
+      </if>
+      <if test="pTime != null">
+        #{pTime,jdbcType=VARCHAR},
+      </if>
+      <if test="pLocal != null">
+        #{pLocal,jdbcType=INTEGER},
+      </if>
+      <if test="pPicture != null">
+        #{pPicture,jdbcType=LONGVARBINARY},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.atguigu.springboot.bean.PInfoExample" resultType="java.lang.Long">
+    select count(*) from p_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update p_info
+    <set>
+      <if test="record.pId != null">
+        p_id = #{record.pId,jdbcType=INTEGER},
+      </if>
+      <if test="record.pPicturelocal != null">
+        p_picturelocal = #{record.pPicturelocal,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pTime != null">
+        p_time = #{record.pTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pLocal != null">
+        p_local = #{record.pLocal,jdbcType=INTEGER},
+      </if>
+      <if test="record.pPicture != null">
+        p_picture = #{record.pPicture,jdbcType=LONGVARBINARY},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update p_info
+    set p_id = #{record.pId,jdbcType=INTEGER},
+      p_picturelocal = #{record.pPicturelocal,jdbcType=VARCHAR},
+      p_time = #{record.pTime,jdbcType=VARCHAR},
+      p_local = #{record.pLocal,jdbcType=INTEGER},
+      p_picture = #{record.pPicture,jdbcType=LONGVARBINARY}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update p_info
+    set p_id = #{record.pId,jdbcType=INTEGER},
+      p_picturelocal = #{record.pPicturelocal,jdbcType=VARCHAR},
+      p_time = #{record.pTime,jdbcType=VARCHAR},
+      p_local = #{record.pLocal,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.atguigu.springboot.bean.PInfo">
+    update p_info
+    <set>
+      <if test="pPicturelocal != null">
+        p_picturelocal = #{pPicturelocal,jdbcType=VARCHAR},
+      </if>
+      <if test="pTime != null">
+        p_time = #{pTime,jdbcType=VARCHAR},
+      </if>
+      <if test="pLocal != null">
+        p_local = #{pLocal,jdbcType=INTEGER},
+      </if>
+      <if test="pPicture != null">
+        p_picture = #{pPicture,jdbcType=LONGVARBINARY},
+      </if>
+    </set>
+    where p_id = #{pId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.atguigu.springboot.bean.PInfo">
+    update p_info
+    set p_picturelocal = #{pPicturelocal,jdbcType=VARCHAR},
+      p_time = #{pTime,jdbcType=VARCHAR},
+      p_local = #{pLocal,jdbcType=INTEGER},
+      p_picture = #{pPicture,jdbcType=LONGVARBINARY}
+    where p_id = #{pId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.atguigu.springboot.bean.PInfo">
+    update p_info
+    set p_picturelocal = #{pPicturelocal,jdbcType=VARCHAR},
+      p_time = #{pTime,jdbcType=VARCHAR},
+      p_local = #{pLocal,jdbcType=INTEGER}
+    where p_id = #{pId,jdbcType=INTEGER}
+  </update>
+</mapper>
