@@ -1,42 +1,26 @@
 package com.atguigu.springboot.controller;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import com.atguigu.springboot.bean.Facedata;
 import com.atguigu.springboot.bean.PInfo;
 import com.atguigu.springboot.bean.TUeInfo;
-
 import com.atguigu.springboot.service.FacedataService;
 import com.atguigu.springboot.service.PInfoService;
 import com.atguigu.springboot.service.TUeInfoService;
 import com.atguigu.springboot.utils.TestInteface;
-import com.sun.corba.se.pept.transport.ListenerThread;
-import com.sun.deploy.pings.Pings;
 import com.sun.jna.Native;
-import org.omg.CORBA.IMP_LIMIT;
-import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.Null;
 import java.io.*;
-import java.lang.reflect.Array;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.jar.JarEntry;
 
 import static com.atguigu.springboot.utils.sort.arraySort;
 
@@ -95,11 +79,16 @@ public class PersonCodeController {
             List<TUeInfo> result = new ArrayList<TUeInfo>();
             List<String> statistics = new ArrayList<String>() ;
 
-            //相似度最高的图片的索引
-            Double i=0.0;
-            String file2= "";
+            //相似度最高的图片的索引file2
 
-            //循环对比
+            double i = 0.0;
+            long file2;
+            int pid = 0;
+
+            /**
+             *
+             * successlist满足5分钟的结果集
+             */
             for (Facedata p : faceDatas){                                         //p是一个人像对象
 
                 System.out.println(p.getStarttime());
@@ -111,12 +100,21 @@ public class PersonCodeController {
                 //输出对比度。
                 System.out.println(consequence);
                 //相似度最高的照片的显示
-                i=consequence;
+                if (consequence>=i){
+                    i=consequence;
+                    //先在这里暂存id全比对完后本地保存图片再读取
+                    pid = p.getId();
+                }
+
+
+
                 //将对比成功的plocal和ptime放到successlist里
                 if (consequence >= 0.5 ){
                     System.out.println(p.getId()+"号人脸比对通过");
                     //对比成功的人脸数据和扫码仪器对比,将5分钟内的数据加入successList里面
                     for (TUeInfo tu : tUeInfos){
+
+
                         Calendar c1 = Calendar.getInstance();
                         Calendar c2 = Calendar.getInstance();
                         Calendar c3 = Calendar.getInstance();
@@ -144,7 +142,25 @@ public class PersonCodeController {
                         }
                     }
                 }
-             }
+            }
+
+
+            //前面在pid中存了相似度最高的id
+
+            Facedata p = faceDatas.get(pid);
+            byte[] buffer = p.getFullimage();
+            OutputStream os;
+            file2 = System.currentTimeMillis();
+            String purl = "C:\\picturebase\\"+file2+".jpg";
+            os = new FileOutputStream(purl);
+            os.write(buffer, 0, buffer.length);
+            os.flush();os.close();
+
+            /**
+             *
+             * 将successlist，也就是所有成功结果集里面的对象统计，取出重复数最多的
+             * 放入statistics，最后取出relist
+             */
             for(int j=0;j<successList.size();j++){
 
                 System.out.println(tUeInfoService.getById(successList.get(j)).getCaptureTime());
@@ -168,7 +184,7 @@ public class PersonCodeController {
             System.out.println(statistics.size());
             m.addAttribute("result",result);
             m.addAttribute("list",relist);
-            m.addAttribute("filename",file2);
+            m.addAttribute("filename",purl);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -179,6 +195,8 @@ public class PersonCodeController {
         }
         return "person_code/list";
     }
+
+
 
     @PostMapping("/test")
     public String test() throws IOException {

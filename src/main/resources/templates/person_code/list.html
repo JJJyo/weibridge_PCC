@@ -133,6 +133,16 @@
 			<div class="row">
 				<!--引入侧边栏-->
 				<div th:replace="commons/bar::#sidebar(activeUri='people')"></div>
+
+
+				<!--
+				数据分类：
+				list     map 存放的最大量数据
+                filename string 图片url
+				-->
+
+
+
 				<main role="main" class="col-md-10 ml-sm-auto col-lg-10 pt-3 px-4">
 					<table class="table2">
 						<tr th:height="300px">
@@ -143,7 +153,6 @@
 										<!--<button class="btn btn-info" type="button" value="请选择图片" onclick="document.getElementById(userimage).click()">选择人脸</button>-->
 										<p><input class="" type="submit" value="提交"/></p>
 									</form>
-
 
 									<!--<form action="test" method="post">-->
 										<!--<p><input class="" type="submit" value="提交"/></p>-->
