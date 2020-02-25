@@ -148,14 +148,26 @@ public class PersonCodeController {
             //前面在pid中存了相似度最高的id
 
             Facedata p = faceDatas.get(pid);
-            byte[] buffer = p.getFullimage();
+            byte[] buffer = p.getImage();
+            byte[] buffer_all = p.getFullimage();
             OutputStream os;
+            OutputStream os2;
             file2 = System.currentTimeMillis();
-            String purl = "C:\\picturebase\\"+file2+".jpg";
-            os = new FileOutputStream(purl);
-            os.write(buffer, 0, buffer.length);
-            os.flush();os.close();
+            File directory = new File("");//参数为空
+            String courseFile = directory.getCanonicalPath();
 
+            String p_url_save = courseFile+"\\src\\main\\resources\\static\\img\\"+file2+".jpg";
+            String p_all_url_save = courseFile+"\\src\\main\\resources\\static\\img\\"+file2+"_all.jpg";
+            os = new FileOutputStream(p_url_save);
+            os2 = new FileOutputStream(p_all_url_save);
+            String p_url = "http://localhost:8083/img/"+file2+".jpg";
+            String p_all_url = "http://localhost:8083/img/"+file2+"_all.jpg";
+            os.write(buffer, 0, buffer.length);
+            os2.write(buffer_all, 0, buffer_all.length);
+            os.flush();
+            os.close();
+            os2.flush();
+            os2.close();
             /**
              *
              * 将successlist，也就是所有成功结果集里面的对象统计，取出重复数最多的
@@ -181,10 +193,14 @@ public class PersonCodeController {
                 relist = list.subList(0,array.length);
             }
 
+
+            int flag=1;
             System.out.println(statistics.size());
             m.addAttribute("result",result);
             m.addAttribute("list",relist);
-            m.addAttribute("filename",purl);
+            m.addAttribute("p_url",p_url);
+            m.addAttribute("p_all_url",p_all_url);
+            m.addAttribute("flag",flag);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();

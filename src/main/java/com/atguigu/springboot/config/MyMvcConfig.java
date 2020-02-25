@@ -7,17 +7,28 @@ import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomi
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.*;
 
 //使用WebMvcConfigurerAdapter可以来扩展SpringMVC的功能
 //@EnableWebMvc   不要接管SpringMVC
 @Configuration
 public class MyMvcConfig extends WebMvcConfigurerAdapter {
 
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        //获取文件的真实路径 work_project代表项目工程名 需要更改
+        String path = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\img\\";
+        String os = System.getProperty("os.name");
+        if (os.toLowerCase().startsWith("win")) {
+            registry.addResourceHandler("/img/**").
+                    addResourceLocations("file:" + path);
+        } else {//linux和mac系统 可以根据逻辑再做处理
+            registry.addResourceHandler("/img/**").
+                    addResourceLocations("file:" + path);
+        }
+        super.addResourceHandlers(registry);
 
+    }
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {

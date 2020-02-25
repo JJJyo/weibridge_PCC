@@ -1,8 +1,10 @@
 package com.atguigu.springboot.controller;
 
 import com.atguigu.springboot.bean.Carnumber;
+import com.atguigu.springboot.bean.Facedata;
 import com.atguigu.springboot.bean.PInfo;
 import com.atguigu.springboot.bean.TUeInfo;
+import com.atguigu.springboot.service.FacedataService;
 import com.atguigu.springboot.service.PInfoService;
 import com.atguigu.springboot.service.TUeInfoService;
 import com.atguigu.springboot.utils.TestInteface;
@@ -15,10 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -30,6 +29,8 @@ public class CodePersonController {
     TUeInfoService tUeInfoService;
     @Autowired
     PInfoService pInfoService;
+    @Autowired
+    FacedataService faceDataService;
 
     @GetMapping("/number")
     public String list(){
@@ -49,14 +50,16 @@ public class CodePersonController {
             System.out.println(INSTANCE.Init());
 
             ArrayList<String> successList = new ArrayList<>();//时间相同 地点相同的抓拍照片的数列
-            List<PInfo> pInfos = pInfoService.getAll();//找出所有人
-            List<PInfo> successPInfos = new ArrayList<PInfo>();//过关的人
+            ArrayList<String> successList_all = new ArrayList<>();//全景照地址
+//            List<PInfo> pInfos = pInfoService.getAll();//找出所有人
+            List<Facedata> faceDatas = faceDataService.getAll();
+            List<Facedata> successPInfos = new ArrayList<Facedata>();//过关的人
             List<TUeInfo> tUeInfos = tUeInfoService.getByNumber(number);//找出所有对应的扫码的纪录
             List<TUeInfo> successtUeInfos = new ArrayList<TUeInfo>();
 
             for (  TUeInfo tUeInfo:tUeInfos
             ) {
-                for (PInfo p: pInfos
+                for (Facedata p: faceDatas
                 ) {
                     Calendar c1 = Calendar.getInstance();
                     Calendar c2 = Calendar.getInstance();
@@ -66,7 +69,7 @@ public class CodePersonController {
                     ParsePosition pos = new ParsePosition(0);
                     SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     ParsePosition pos2 = new ParsePosition(0);
-                    String strDate = p.getpTime();
+                    String strDate = p.getStarttime();
                     String tuTime = tUeInfo.getCaptureTime();
                     Date strtodate = formatter.parse(strDate, pos);
                     Date strtodate2 = formatter2.parse(tuTime, pos2);
@@ -76,7 +79,7 @@ public class CodePersonController {
                     c3.add(Calendar.MINUTE, 5);
                     c2.add(Calendar.MINUTE, -5);//减去五分钟
 
-                    if (c1.after(c2) && c1.before(c3) && p.getpLocal()==Integer.valueOf(tUeInfo.getLatype()) ) {
+                    if (c1.after(c2) && c1.before(c3) && Integer.valueOf(tUeInfo.getLatype())==Integer.valueOf(p.getCameraip()) ) {
 
                         successPInfos.add(p);
 //                        successList.add(p.getpPicturelocal().replace("C:\\picturebase\\","http://localhost:8083/image/"));
@@ -87,28 +90,30 @@ public class CodePersonController {
                     }
                 }
             }
-            List<PInfo> finalPInfos = new ArrayList<PInfo>();//过关的人
+            List<Facedata> finalPInfos = new ArrayList<Facedata>();//过关的人
             List<Integer> counts = new ArrayList<Integer>();//过关的人的统计数据
             //先找出有几个独立的人
             //先用第一个人来人脸比对，找出和他不一样的人，把第一个人和他们放在一个list里，再从第二个开始和后面的对比 ×
             //第一个人和所有的人比对 如果和比自己小的比对成功，进行下一轮，和自己大的比对用来计数
             int counta = 0;
             for (int i=0 ; i<=successPInfos.size()-1 ; i++) {
-                FileInputStream in1 = new FileInputStream(
-                        new File(successPInfos.get(i).getpPicturelocal()));
-                byte[] image1 = new byte[in1.available()];
-                in1.read(image1, 0,image1.length);
-                in1.close();
+//                FileInputStream in1 = new FileInputStream(
+//                        new File(successPInfos.get(i).getpPicturelocal()));
+//                byte[] image1 = new byte[in1.available()];
+//                in1.read(image1, 0,image1.length);
+//                in1.close();
+                byte[] image1 = successPInfos.get(i).getImage();
                 //count初始化
                 counta=0;
 
                 for (int j=0; j<=successPInfos.size()-1; j++) {
-                    FileInputStream in2 = new FileInputStream(
-                            new File(successPInfos.get(j).getpPicturelocal()));
-                    byte[] image2 = new byte[in2.available()];
-                    in2.read(image2, 0, image2.length);
-                    in2.close();
+//                    FileInputStream in2 = new FileInputStream(
+//                            new File(successPInfos.get(j).getpPicturelocal()));
+//                    byte[] image2 = new byte[in2.available()];
+//                    in2.read(image2, 0, image2.length);
+//                    in2.close();
 
+                    byte [] image2 = successPInfos.get(j).getImage();
                     double consequence = INSTANCE.YK_Compare_JAVA(
                             image1, image1.length,
                             image2, image2.length);
@@ -133,15 +138,39 @@ public class CodePersonController {
             System.out.println(finalPInfos.size());
             System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
-            for ( PInfo p:finalPInfos
+            for ( Facedata p:finalPInfos
                  ) {
 
-                successList.add(p.getpPicturelocal().replace("C:\\picturebase\\","http://localhost:8083/image/"));
+                byte[] buffer = p.getImage();
+                byte[] buffer_all = p.getFullimage();
+                OutputStream os;
+                OutputStream os2;
+                long file2 = System.currentTimeMillis();
+                File directory = new File("");//参数为空
+                String courseFile = directory.getCanonicalPath();
+
+                String p_url_save = courseFile+"\\src\\main\\resources\\static\\img\\"+file2+"cp.jpg";
+                String p_all_url_save = courseFile+"\\src\\main\\resources\\static\\img\\"+file2+"cp_all.jpg";
+                os = new FileOutputStream(p_url_save);
+                os2 = new FileOutputStream(p_all_url_save);
+                String p_url = "http://localhost:8083/img/"+file2+".jpg";
+                String p_all_url = "http://localhost:8083/img/"+file2+"_all.jpg";
+                os.write(buffer, 0, buffer.length);
+                os2.write(buffer_all, 0, buffer_all.length);
+                os.flush();
+                os.close();
+                os2.flush();
+                os2.close();
+
+
+                successList.add(p_url);
+                successList_all.add(p_all_url);
             }
 
             int count = tUeInfos.size(); //count表示该号码被扫描的次数
             m.addAttribute("count",count);
             m.addAttribute("success",successList);
+            m.addAttribute("successall",successList_all);
             m.addAttribute("finalPInfos",finalPInfos);
             m.addAttribute("counts",counts);
 

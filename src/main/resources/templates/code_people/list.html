@@ -50,7 +50,7 @@
 							<tr>
 								<td width="140" height="58">人脸详情</td>
 								<td>有效次数（去除正负5分钟）</td>
-								<!--<td>地点</td>-->
+								<td>详情</td>
 								<!--<td>时间</td>-->
 							</tr>
 							<tr th:each="t:${success}">
@@ -58,7 +58,11 @@
 									<img th:src="${t}" width="200px" height="200px">
 								</td>
 								<td th:text="${counts[tStat.index]}"></td>
-
+								<td>
+									<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+										查询信息
+									</button>
+								</td>
 							</tr>
 
 						</table>
@@ -67,7 +71,33 @@
 
 
 				</main>
-		</div>
+				<div class="modal fade" id="myModal">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content" >
+
+							<!-- 模态框头部 -->
+							<div class="modal-header">
+								<h4 class="modal-title">详细信息</h4>
+								<button type="button" class="close" data-dismiss="modal">&times;</button>
+							</div>
+
+							<!-- 模态框主体 -->
+							<div class="modal-body col-4" th:each="lista:${p_all_url}">
+								<img th:src="${successall[0]}" onerror="/asserts/img/timg.jpg"/>
+
+							</div>
+
+							<!-- 模态框底部 -->
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
+
+
 		<!-- Bootstrap core JavaScript
     ================================================== -->
 		<!-- Placed at the end of the document so the pages load faster -->
